@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MH36 TRAVEL Platform
 
 Hệ thống đặt tour du lịch cao cấp, hỗ trợ 6 luồng chức năng chính: Landing Page, Tìm kiếm Tour, Chi tiết Tour (Checkout), Customer Dashboard, Admin Dashboard và Tích hợp công cụ tự động (AI Chatbot, Nhắc nhở qua Edge Functions, Google Calendar).
@@ -84,3 +85,6 @@ Mở trình duyệt truy cập: `http://localhost:3000` để trải nghiệm d�
    - Nhập domain mới (VD: `mh36-platform.com`).
    - Vào trình quản lý DNS Domain (VD: Cloudflare), trỏ bản ghi A về địa chỉ IP do Vercel cung cấp (VD: 76.76.21.21).
    - Vercel tích hợp sẵn dịch vụ tự động nâng cấp chứng chỉ SSL HTTPS Miễn phí Let's Encrypt.
+=======
+# MH36
+>>>>>>> 56861f63a8960d14dd0b7da5bf4177af4a966e28
