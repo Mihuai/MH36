@@ -19,13 +19,21 @@ export async function POST(request: NextRequest) {
 
     // Tự động tạo tên file duy nhất tránh trùng lặp
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const filename = `${uniqueSuffix}-${file.name.replace(/\s+/g, "_")}`;
+    
+    // Làm sạch tên file (xóa dấu tiếng Việt, kí tự lạ)
+    const sanitizedName = file.name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9.-]/g, '_');
+      
+    const filename = `${uniqueSuffix}-${sanitizedName}`;
+    const contentType = file.type || 'image/jpeg';
     
     // Upload lên bucket 'tours'
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('tours')
       .upload(filename, buffer, {
-        contentType: file.type,
+        contentType: contentType,
         upsert: false
       });
 

@@ -22,8 +22,7 @@ export default function AdminChatPage() {
     async function fetchChatList() {
       if (!supabase) return;
       
-      // Get unique sessions with latest message info
-      // Since fetching distinct with latest is tricky in simple SQL, we do a raw query or simple fetch
+      // Get messages ordered by date
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -33,24 +32,48 @@ export default function AdminChatPage() {
         console.error("Error fetching chat list:", error);
       } else {
         // Group by session_id/user_id to create a unique chat list
-        const uniqueChats: any[] = [];
-        const seen = new Set();
+        const uniqueChatsMap = new Map<string, any>();
         
         data.forEach((m: any) => {
           const key = m.session_id || m.user_id;
-          if (!seen.has(key)) {
-            seen.add(key);
-            uniqueChats.push({
+          if (!key) return; // Skip invalid messages
+          
+          if (!uniqueChatsMap.has(key)) {
+            uniqueChatsMap.set(key, {
               sessionId: m.session_id,
               userId: m.user_id,
-              name: m.user_name || (m.user_id ? 'Khách đã đăng nhập' : 'Khách vãng lai'),
+              name: m.user_name || (m.user_id ? 'Người dùng hệ thống' : 'Khách vãng lai'),
               lastMessage: m.content,
               time: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              unread: m.is_read ? 0 : 1, // Mock unread logic
-              status: "online"
+              unread: m.is_read ? 0 : 1,
+              status: "online",
+              createdAt: m.created_at
             });
           }
         });
+
+        const uniqueChats = Array.from(uniqueChatsMap.values());
+        
+        // Fetch real names for user_id based chats
+        const userIds = uniqueChats.filter(c => c.userId).map(c => c.userId);
+        if (userIds.length > 0) {
+          const { data: usersData } = await supabase
+            .from('users')
+            .select('id, full_name, avatar_url')
+            .in('id', userIds);
+          
+          if (usersData) {
+            usersData.forEach(u => {
+              uniqueChats.forEach(c => {
+                if (c.userId === u.id && u.full_name) {
+                  c.name = u.full_name;
+                  c.avatar = u.avatar_url;
+                }
+              });
+            });
+          }
+        }
+
         setChats(uniqueChats);
         if (uniqueChats.length > 0 && !activeSessionId) {
           setActiveSessionId(uniqueChats[0].sessionId || uniqueChats[0].userId);

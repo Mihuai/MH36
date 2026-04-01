@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # MH36 TRAVEL Platform
 
 Hệ thống đặt tour du lịch cao cấp, hỗ trợ 6 luồng chức năng chính: Landing Page, Tìm kiếm Tour, Chi tiết Tour (Checkout), Customer Dashboard, Admin Dashboard và Tích hợp công cụ tự động (AI Chatbot, Nhắc nhở qua Edge Functions, Google Calendar).
@@ -14,6 +13,7 @@ Hệ thống đặt tour du lịch cao cấp, hỗ trợ 6 luồng chức năng 
   - Supabase Edge Functions tự động quét dữ liệu và nhắc lịch 24h trước giờ khởi hành (tích hợp Zalo ZNS / Email).
 
 ---
+
 
 ## 💻 Tech Stack
 - Frontend: **Next.js 15 (App Router)**, **TypeScript**, **Tailwind CSS**, **Framer Motion**, **shadcn/ui**, **lucide-react**.
@@ -85,6 +85,6 @@ Mở trình duyệt truy cập: `http://localhost:3000` để trải nghiệm d�
    - Nhập domain mới (VD: `mh36-platform.com`).
    - Vào trình quản lý DNS Domain (VD: Cloudflare), trỏ bản ghi A về địa chỉ IP do Vercel cung cấp (VD: 76.76.21.21).
    - Vercel tích hợp sẵn dịch vụ tự động nâng cấp chứng chỉ SSL HTTPS Miễn phí Let's Encrypt.
-=======
-# MH36
->>>>>>> 56861f63a8960d14dd0b7da5bf4177af4a966e28
+   
+Email:admin@mh36travel.com
+Mật khẩu: admin123

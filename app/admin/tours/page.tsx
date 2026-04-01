@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Search, Plus, MoreHorizontal, Filter, Package, Eye, Edit, Trash2, PlusCircle, X } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Filter, Package, Eye, Edit, Trash2, PlusCircle, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,20 +42,30 @@ export default function AdminToursPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 1. Kiểm tra dung lượng file (4.5MB là giới hạn Vercel, cài 4MB cho an toàn)
+    const MAX_SIZE = 4 * 1024 * 1024; // 4MB
+    if (file.size > MAX_SIZE) {
+      alert(`File quá lớn (${(file.size / (1024 * 1024)).toFixed(2)}MB). Vui lòng chọn ảnh dưới 4MB để đảm bảo hệ thống hoạt động ổn định.`);
+      e.target.value = ''; // Reset input
+      return;
+    }
+
     setIsUploading(true);
     try {
       const data = new FormData();
       data.append('file', file);
       const res = await fetch('/api/upload', { method: 'POST', body: data });
       const result = await res.json();
+      
       if (result.success) {
         setFormData(prev => ({ ...prev, imageUrl: result.url }));
       } else {
-        alert("Lỗi upload: " + result.error);
+        // Xử lý các lỗi nghiệp vụ từ API (vd: bucket lỗi, format không hỗ trợ)
+        alert("Lỗi upload: " + (result.error || "Không xác định"));
       }
     } catch (err) {
       console.error(err);
-      alert("Đã xảy ra lỗi khi upload ảnh.");
+      alert("Đã xảy ra lỗi kết nối khi upload. Hãy kiểm tra lại mạng hoặc thử lại sau.");
     } finally {
       setIsUploading(false);
     }
@@ -213,213 +223,269 @@ export default function AdminToursPage() {
 
       {/* Dialog Add Tour */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto w-[95vw]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Thêm Tour mới</DialogTitle>
+        <DialogContent className="max-w-5xl max-h-[92vh] flex flex-col p-0 overflow-hidden w-[95vw]">
+          <DialogHeader className="p-6 border-b bg-card shrink-0">
+            <DialogTitle className="text-2xl font-bold">Thêm Tour mới</DialogTitle>
             <DialogDescription>Điền thông tin chi tiết đầy đủ cho Tour du lịch mới.</DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-4">
-            {/* Cột 1: Thông tin cơ bản */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg border-b pb-2 text-primary">Thông tin Cơ bản</h3>
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Tên Tour</label>
-                <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Vd: Tour Đà Nẵng..." />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold mb-2 block">Mã Tour</label>
-                  <Input value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} placeholder="Vd: DN2026" />
+          
+          <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              {/* Cột 1: Thông tin cơ bản */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Package className="w-5 h-5 text-primary" />
+                  <h3 className="font-bold text-lg text-primary">Thông tin Cơ bản</h3>
                 </div>
-                <div>
-                  <label className="text-sm font-semibold mb-2 block">Mức giá</label>
-                  <Input type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
-                </div>
-              </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Tên Tour <span className="text-destructive">*</span></label>
+                    <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Vd: Tour Phú Quốc 3N2Đ..." className="h-11 rounded-xl shadow-sm" />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block">Mã Tour</label>
+                      <Input value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} placeholder="Vd: PQ2026" className="h-11 rounded-xl shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block">Mức giá (₫)</label>
+                      <Input type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} className="h-11 rounded-xl shadow-sm font-bold" />
+                    </div>
+                  </div>
 
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Hình ảnh Tour (Upload)</label>
-                <div className="flex gap-4 items-center">
-                  {formData.imageUrl && (
-                    <img src={formData.imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded-xl border shrink-0" />
-                  )}
-                  <div className="flex-1">
-                    <Input type="file" accept="image/*" onChange={handleFileUpload} disabled={isUploading} className="cursor-pointer file:text-primary file:font-semibold" />
-                    {isUploading && <span className="text-xs text-primary font-medium mt-1 inline-block">Đang tải ảnh lên...</span>}
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Hình ảnh Tour (Upload)</label>
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center p-4 rounded-2xl bg-muted/20 border border-dashed border-border/60">
+                      {formData.imageUrl ? (
+                        <div className="relative group shrink-0">
+                           <img src={formData.imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-xl border-2 border-primary/20 shadow-md" />
+                           <button onClick={() => setFormData({...formData, imageUrl: ''})} className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-all"><X className="w-3 h-3" /></button>
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 rounded-xl border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center bg-muted/10 shrink-0">
+                           <ImageIcon className="w-6 h-6 text-muted-foreground/30 mb-1" />
+                           <span className="text-[10px] text-muted-foreground/50 uppercase font-bold tracking-tighter">No Preview</span>
+                        </div>
+                      )}
+                      <div className="flex-1 w-full">
+                        <Input type="file" accept="image/*" onChange={handleFileUpload} disabled={isUploading} className="cursor-pointer file:text-primary file:font-bold file:mr-4 file:px-4 file:bg-primary/5 file:border-none file:rounded-lg h-11 bg-background" />
+                        <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">* Nên dùng ảnh HD, tỉ lệ 4:3 hoặc 16:9. Tối đa 4MB.</p>
+                        {isUploading && <span className="text-xs text-primary font-bold mt-2 inline-flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin" /> Đang xử lý ảnh...</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Giới thiệu ngắn</label>
+                    <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="min-h-[100px] rounded-xl shadow-sm resize-none" placeholder="Tóm tắt về trải nghiệm của tour..." />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                     <div>
+                        <label className="text-sm font-bold mb-1.5 block">Dịch vụ Bao gồm</label>
+                        <Textarea value={formData.includes} onChange={e => setFormData({...formData, includes: e.target.value})} className="h-32 text-sm rounded-xl bg-green-50/20 border-green-100/50" placeholder="- Vé máy bay&#10;- Khách sạn 4 sao..." />
+                     </div>
+                     <div>
+                        <label className="text-sm font-bold mb-1.5 block">Không Bao gồm</label>
+                        <Textarea value={formData.excludes} onChange={e => setFormData({...formData, excludes: e.target.value})} className="h-32 text-sm rounded-xl bg-orange-50/20 border-orange-100/50" placeholder="- Tiền tip HDV&#10;- Thuế VAT..." />
+                     </div>
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Giới thiệu Tổng quan</label>
-                <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="h-24" placeholder="Viết mô tả hấp dẫn về tour..." />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <label className="text-sm font-semibold mb-2 block">Dịch vụ Bao gồm</label>
-                    <Textarea value={formData.includes} onChange={e => setFormData({...formData, includes: e.target.value})} className="h-24 text-sm" placeholder="- Vé máy bay&#10;- Khách sạn 4 sao..." />
-                 </div>
-                 <div>
-                    <label className="text-sm font-semibold mb-2 block">Không Bao gồm</label>
-                    <Textarea value={formData.excludes} onChange={e => setFormData({...formData, excludes: e.target.value})} className="h-24 text-sm" placeholder="- Tiền tip HDV&#10;- Thuế VAT..." />
-                 </div>
-              </div>
-            </div>
-
-            {/* Cột 2: Lịch trình chi tiết */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center border-b pb-2">
-                 <h3 className="font-semibold text-lg text-primary">Lịch trình Chi tiết</h3>
-                 <Button type="button" variant="outline" size="sm" onClick={handleAddDay} className="gap-2 h-8">
-                    <PlusCircle className="w-4 h-4" /> Thêm Ngày Mới
-                 </Button>
-              </div>
-              
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                 {formData.itinerary.map((day, index) => (
-                    <div key={index} className="bg-muted/30 border border-border/50 rounded-xl p-4 relative group">
-                       <button onClick={() => handleRemoveDay(index)} className="absolute top-3 right-3 text-muted-foreground hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><X className="w-4 h-4" /></button>
-                       <h4 className="font-bold text-sm mb-3 text-primary">Ngày {day.day}</h4>
-                       <div className="space-y-3">
-                          <Input 
-                             value={day.title} 
-                             onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} 
-                             placeholder="Tiêu đề (Vd: Hà Nội - Sapa - Bản Cát Cát...)" 
-                             className="h-9 bg-background"
-                          />
-                          <Textarea 
-                             value={day.content} 
-                             onChange={(e) => handleItineraryChange(index, 'content', e.target.value)} 
-                             placeholder="Sáng: HDV đón khách tại Sân bay...&#10;Trưa: ...&#10;Tối: ..." 
-                             className="h-28 bg-background text-sm"
-                          />
-                       </div>
-                    </div>
-                 ))}
-                 {formData.itinerary.length === 0 && (
-                   <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl">Chưa có lịch trình. Bấm "Thêm Ngày Mới" để bắt đầu.</div>
-                 )}
+              {/* Cột 2: Lịch trình chi tiết */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center border-b pb-2">
+                   <div className="flex items-center gap-2">
+                      <PlusCircle className="w-5 h-5 text-primary" />
+                      <h3 className="font-bold text-lg text-primary">Lịch trình Chi tiết</h3>
+                   </div>
+                   <Button type="button" variant="outline" size="sm" onClick={handleAddDay} className="gap-2 h-9 rounded-lg font-bold border-primary/30 text-primary hover:bg-primary/5">
+                      Thêm Ngày Mới
+                   </Button>
+                </div>
+                
+                <div className="space-y-4 pr-1">
+                   {formData.itinerary.map((day, index) => (
+                      <div key={index} className="bg-card border border-border/60 rounded-2xl shadow-sm overflow-hidden group">
+                         <div className="bg-muted/10 p-3 flex justify-between items-center border-b border-border/40">
+                            <span className="text-xs font-black text-primary/60 uppercase tracking-widest">Ngày {day.day}</span>
+                            <button onClick={() => handleRemoveDay(index)} className="text-muted-foreground hover:text-destructive p-1 rounded-full hover:bg-destructive/5 transition-all outline-none">
+                               <X className="w-4 h-4" />
+                            </button>
+                         </div>
+                         <div className="p-4 space-y-4">
+                            <Input 
+                               value={day.title} 
+                               onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} 
+                               placeholder="Tiêu đề chính (Vd: Hà Nội - Sapa...)" 
+                               className="h-10 bg-background border-none shadow-none font-bold text-[15px] focus-visible:ring-0 px-0"
+                            />
+                            <Textarea 
+                               value={day.content} 
+                               onChange={(e) => handleItineraryChange(index, 'content', e.target.value)} 
+                               placeholder="Mô tả chi tiết các hoạt động..." 
+                               className="min-h-[120px] bg-muted/20 border-none rounded-xl text-sm focus-visible:ring-1 focus-visible:ring-primary/20"
+                            />
+                         </div>
+                      </div>
+                   ))}
+                   {formData.itinerary.length === 0 && (
+                     <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border/40 rounded-3xl bg-muted/5">
+                       <PlusCircle className="w-10 h-10 mx-auto mb-4 opacity-10" />
+                       <p className="font-bold">Chưa có lịch trình.</p>
+                       <p className="text-xs opacity-70">Bấm "Thêm Ngày Mới" để bắt đầu xây dựng lộ trình.</p>
+                     </div>
+                   )}
+                </div>
               </div>
             </div>
           </div>
-          <DialogFooter className="bg-muted/20 p-4 -mx-6 -mb-6 mt-2 rounded-b-lg border-t">
-            <Button variant="outline" onClick={() => setIsAddOpen(false)}>Hủy bỏ</Button>
-            <Button onClick={handleAddSubmit} className="font-bold px-8">Tạo Tour Ngay</Button>
+          
+          <DialogFooter className="sticky bottom-0 p-6 bg-card border-t flex flex-col sm:flex-row gap-3 sm:justify-end shrink-0">
+            <Button variant="ghost" onClick={() => setIsAddOpen(false)} className="rounded-xl px-6 h-11 font-semibold">Thoát</Button>
+            <Button onClick={handleAddSubmit} className="rounded-xl px-10 h-11 font-bold shadow-lg shadow-primary/20">Lưu & Tạo Tour</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Dialog Edit Tour */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto w-[95vw]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Cập nhật Tour Du lịch</DialogTitle>
+        <DialogContent className="max-w-5xl max-h-[92vh] flex flex-col p-0 overflow-hidden w-[95vw]">
+          <DialogHeader className="p-6 border-b bg-card shrink-0">
+            <DialogTitle className="text-2xl font-bold">Cập nhật Tour Du lịch</DialogTitle>
             <DialogDescription>Sửa đổi thông tin, hình ảnh hoặc lộ trình cho {currentTour?.name}</DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-4">
-            {/* Cột 1: Thông tin cơ bản */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg border-b pb-2 text-primary">Thông tin Cơ bản</h3>
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Tên Tour</label>
-                <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold mb-2 block">Mã Tour</label>
-                  <Input value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} />
+          
+          <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              {/* Cột 1: Thông tin cơ bản */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Package className="w-5 h-5 text-primary" />
+                  <h3 className="font-bold text-lg text-primary">Thông tin Cơ bản</h3>
                 </div>
-                <div>
-                  <label className="text-sm font-semibold mb-2 block">Mức giá</label>
-                  <Input type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Đổi Hình ảnh (Upload)</label>
-                <div className="flex gap-4 items-center">
-                  {formData.imageUrl ? (
-                    <img src={formData.imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded-xl border shrink-0" />
-                  ) : (
-                    <div className="w-16 h-16 rounded-xl border bg-muted flex items-center justify-center shrink-0">
-                       <span className="text-xs text-muted-foreground">None</span>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Tên Tour</label>
+                    <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="h-11 rounded-xl shadow-sm" />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block">Mã Tour</label>
+                      <Input value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})} className="h-11 rounded-xl shadow-sm" />
                     </div>
-                  )}
-                  <div className="flex-1">
-                    <Input type="file" accept="image/*" onChange={handleFileUpload} disabled={isUploading} className="cursor-pointer file:text-primary file:font-semibold" />
-                    {isUploading && <span className="text-xs text-primary font-medium mt-1 inline-block">Đang tải ảnh lên...</span>}
+                    <div>
+                      <label className="text-sm font-bold mb-1.5 block">Mức giá (₫)</label>
+                      <Input type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} className="h-11 rounded-xl shadow-sm font-bold" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Đổi Hình ảnh (Upload)</label>
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center p-4 rounded-2xl bg-muted/20 border border-dashed border-border/60">
+                      {formData.imageUrl ? (
+                        <div className="relative group shrink-0">
+                           <img src={formData.imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-xl border-2 border-primary/20 shadow-md" />
+                           <button onClick={() => setFormData({...formData, imageUrl: ''})} className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-all"><X className="w-3 h-3" /></button>
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 rounded-xl border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center bg-muted/10 shrink-0">
+                           <ImageIcon className="w-6 h-6 text-muted-foreground/30 mb-1" />
+                           <span className="text-[10px] text-muted-foreground/50 uppercase font-bold tracking-tighter">No Preview</span>
+                        </div>
+                      )}
+                      <div className="flex-1 w-full">
+                        <Input type="file" accept="image/*" onChange={handleFileUpload} disabled={isUploading} className="cursor-pointer file:text-primary file:font-bold file:mr-4 file:px-4 file:bg-primary/5 file:border-none file:rounded-lg h-11 bg-background" />
+                        <p className="text-[10px] text-muted-foreground mt-2 font-medium italic">* Tối đa 4MB. Các định dạng hỗ trợ: JPG, PNG, WEBP.</p>
+                        {isUploading && <span className="text-xs text-primary font-bold mt-2 inline-flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin" /> Đang xử lý ảnh...</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                     <label className="text-sm font-bold mb-1.5 block">Trạng thái Tour</label>
+                     <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+                       <option value="active">Đang mở bán (Active)</option>
+                       <option value="draft">Bản nháp (Draft)</option>
+                       <option value="paused">Tạm dừng (Paused)</option>
+                     </select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold mb-1.5 block">Giới thiệu Tổng quan</label>
+                    <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="min-h-[100px] rounded-xl shadow-sm resize-none" />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                     <div>
+                        <label className="text-sm font-bold mb-1.5 block">Dịch vụ Bao gồm</label>
+                        <Textarea value={formData.includes} onChange={e => setFormData({...formData, includes: e.target.value})} className="h-32 text-sm rounded-xl bg-green-50/20 border-green-100/50" />
+                     </div>
+                     <div>
+                        <label className="text-sm font-bold mb-1.5 block">Không Bao gồm</label>
+                        <Textarea value={formData.excludes} onChange={e => setFormData({...formData, excludes: e.target.value})} className="h-32 text-sm rounded-xl bg-orange-50/20 border-orange-100/50" />
+                     </div>
                   </div>
                 </div>
               </div>
 
-              <div>
-                 <label className="text-sm font-semibold mb-2 block">Trạng thái Tour</label>
-                 <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-                   <option value="active">Đang mở bán (Active)</option>
-                   <option value="draft">Bản nháp (Draft)</option>
-                   <option value="paused">Tạm dừng (Paused)</option>
-                 </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Giới thiệu Tổng quan</label>
-                <Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="h-24" />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <label className="text-sm font-semibold mb-2 block">Dịch vụ Bao gồm</label>
-                    <Textarea value={formData.includes} onChange={e => setFormData({...formData, includes: e.target.value})} className="h-24 text-sm" />
-                 </div>
-                 <div>
-                    <label className="text-sm font-semibold mb-2 block">Không Bao gồm</label>
-                    <Textarea value={formData.excludes} onChange={e => setFormData({...formData, excludes: e.target.value})} className="h-24 text-sm" />
-                 </div>
-              </div>
-            </div>
-
-            {/* Cột 2: Lịch trình chi tiết */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center border-b pb-2">
-                 <h3 className="font-semibold text-lg text-primary">Lịch trình Chi tiết</h3>
-                 <Button type="button" variant="outline" size="sm" onClick={handleAddDay} className="gap-2 h-8 border-primary text-primary hover:bg-primary/10">
-                    <PlusCircle className="w-4 h-4" /> Thêm Ngày Mới
-                 </Button>
-              </div>
-              
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                 {formData.itinerary.map((day, index) => (
-                    <div key={index} className="bg-muted/30 border border-border/50 rounded-xl p-4 relative group">
-                       <button onClick={() => handleRemoveDay(index)} className="absolute top-3 right-3 text-muted-foreground hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100"><X className="w-4 h-4" /></button>
-                       <h4 className="font-bold text-sm mb-3 text-primary">Ngày {day.day}</h4>
-                       <div className="space-y-3">
-                          <Input 
-                             value={day.title} 
-                             onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} 
-                             placeholder="Tiêu đề ngày..." 
-                             className="h-9 bg-background"
-                          />
-                          <Textarea 
-                             value={day.content} 
-                             onChange={(e) => handleItineraryChange(index, 'content', e.target.value)} 
-                             placeholder="Nội dung hoạt động..." 
-                             className="h-28 bg-background text-sm"
-                          />
-                       </div>
-                    </div>
-                 ))}
-                 {formData.itinerary.length === 0 && (
-                   <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl">Chưa có lịch trình. Bấm "Thêm Ngày Mới" để khai báo.</div>
-                 )}
+              {/* Cột 2: Lịch trình chi tiết */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center border-b pb-2">
+                   <div className="flex items-center gap-2">
+                      <PlusCircle className="w-5 h-5 text-primary" />
+                      <h3 className="font-bold text-lg text-primary">Lịch trình Chi tiết</h3>
+                   </div>
+                   <Button type="button" variant="outline" size="sm" onClick={handleAddDay} className="gap-2 h-9 rounded-lg font-bold border-primary/30 text-primary hover:bg-primary/5">
+                      Thêm Ngày Mới
+                   </Button>
+                </div>
+                
+                <div className="space-y-4 pr-1">
+                   {formData.itinerary.map((day, index) => (
+                      <div key={index} className="bg-card border border-border/60 rounded-2xl shadow-sm overflow-hidden group">
+                         <div className="bg-muted/10 p-3 flex justify-between items-center border-b border-border/40">
+                            <span className="text-xs font-black text-primary/60 uppercase tracking-widest">Ngày {day.day}</span>
+                            <button onClick={() => handleRemoveDay(index)} className="text-muted-foreground hover:text-destructive p-1 rounded-full hover:bg-destructive/5 transition-all outline-none">
+                               <X className="w-4 h-4" />
+                            </button>
+                         </div>
+                         <div className="p-4 space-y-4">
+                            <Input 
+                               value={day.title} 
+                               onChange={(e) => handleItineraryChange(index, 'title', e.target.value)} 
+                               placeholder="Tiêu đề ngày..." 
+                               className="h-10 bg-background border-none shadow-none font-bold text-[15px] focus-visible:ring-0 px-0"
+                            />
+                            <Textarea 
+                               value={day.content} 
+                               onChange={(e) => handleItineraryChange(index, 'content', e.target.value)} 
+                               placeholder="Nội dung hoạt động..." 
+                               className="min-h-[120px] bg-muted/20 border-none rounded-xl text-sm focus-visible:ring-1 focus-visible:ring-primary/20"
+                            />
+                         </div>
+                      </div>
+                   ))}
+                   {formData.itinerary.length === 0 && (
+                     <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border/40 rounded-3xl bg-muted/5">
+                        <PlusCircle className="w-10 h-10 mx-auto mb-4 opacity-10" />
+                        <p className="font-bold">Chưa có lịch trình.</p>
+                        <p className="text-xs opacity-70">Bấm "Thêm Ngày Mới" để khai báo.</p>
+                     </div>
+                   )}
+                </div>
               </div>
             </div>
           </div>
-          <DialogFooter className="bg-muted/20 p-4 -mx-6 -mb-6 mt-2 rounded-b-lg border-t">
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Hủy bỏ</Button>
-            <Button onClick={handleEditSubmit} className="font-bold px-8">Lưu thay đổi</Button>
+          
+          <DialogFooter className="sticky bottom-0 p-6 bg-card border-t flex flex-col sm:flex-row gap-3 sm:justify-end shrink-0">
+            <Button variant="ghost" onClick={() => setIsEditOpen(false)} className="rounded-xl px-6 h-11 font-semibold">Hủy bỏ</Button>
+            <Button onClick={handleEditSubmit} className="rounded-xl px-10 h-11 font-bold shadow-lg shadow-primary/20">Lưu thay đổi</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
