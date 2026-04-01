@@ -108,23 +108,33 @@ export default function Header() {
                   </div>
                   <span className="hidden sm:block text-sm font-semibold truncate max-w-[120px]">{user?.name}</span>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2">
-                  <div className="px-2 py-1.5 mb-1">
-                    <p className="text-sm font-medium leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground mt-1 truncate">{user?.email}</p>
+                <DropdownMenuContent align="end" className="w-64 mt-3 bg-white border border-slate-100 shadow-2xl rounded-2xl p-2 z-[999] relative">
+                  <div className="px-4 py-3 mb-2 bg-blue-50/50 rounded-xl">
+                    <p className="text-sm font-black text-[#00355D] truncate">{user?.name}</p>
+                    <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{user?.email}</p>
                   </div>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="bg-slate-50 mb-1" />
+                  
                   {user?.role === 'admin' && (
-                    <DropdownMenuItem>
-                      <Link href="/admin" className="cursor-pointer w-full flex items-center">Trang Quản Trị</Link>
+                    <DropdownMenuItem className="focus:bg-blue-50 rounded-xl">
+                      <Link href="/admin" className="cursor-pointer w-full flex items-center font-bold text-xs text-blue-600 py-1.5 px-2">
+                        🛡️ Trang Quản Trị Hệ Thống
+                      </Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem>
-                    <Link href="/dashboard" className="cursor-pointer w-full flex items-center">Quản lý Tài Khoản</Link>
+                  
+                  <DropdownMenuItem className="focus:bg-slate-50 rounded-xl">
+                    <Link href="/dashboard" className="cursor-pointer w-full flex items-center font-bold text-xs text-slate-600 py-1.5 px-2">
+                      👤 Quản lý Tài Khoản
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="cursor-pointer text-rose-500 font-medium focus:bg-rose-50 focus:text-rose-600">
-                    Đăng xuất
+                  
+                  <DropdownMenuSeparator className="bg-slate-50 my-1" />
+                  
+                  <DropdownMenuItem onClick={logout} className="cursor-pointer focus:bg-rose-50 rounded-xl">
+                    <div className="w-full flex items-center font-black text-xs text-rose-500 py-1.5 px-2">
+                      Đăng xuất ngay
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

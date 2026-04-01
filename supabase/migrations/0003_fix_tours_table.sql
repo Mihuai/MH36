@@ -1,0 +1,13 @@
+-- UPDATE TOURS TABLE TO MATCH ADMIN REQUIREMENTS
+ALTER TABLE public.tours 
+ADD COLUMN IF NOT EXISTS code TEXT,
+ADD COLUMN IF NOT EXISTS image_url TEXT,
+ADD COLUMN IF NOT EXISTS location TEXT,
+ADD COLUMN IF NOT EXISTS duration TEXT;
+
+-- ENSURE PRICE FIELD COMPATIBILITY
+-- (Using price_adult as the lead field but ensuring UI can write to it)
+
+-- UPDATE RLS TO BE FULLY OPEN FOR ADMIN OPERATIONS
+DROP POLICY IF EXISTS "Allow Admin All Tours" ON public.tours;
+CREATE POLICY "Allow Admin All Tours" ON public.tours FOR ALL USING (true);

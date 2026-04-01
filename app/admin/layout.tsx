@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Package, Users, ShoppingCart, Settings, LogOut, CreditCard, Bell, MessageCircle, Ticket } from 'lucide-react';
+import { LayoutDashboard, Package, Users, ShoppingCart, Settings, LogOut, CreditCard, Bell, MessageCircle, Ticket, Globe, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -36,7 +36,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Admin Sidebar */}
       <aside className="w-64 bg-card border-r border-border/60 flex flex-col hidden md:flex">
         <div className="h-16 flex items-center px-6 border-b border-border/60 shrink-0">
-          <Link href="/admin"><span className="text-xl font-bold tracking-tighter text-primary">MH36 ADMIN</span></Link>
+          <Link href="/admin"><span className="text-xl font-black tracking-tighter text-[#0192f3]">MH36 ADMIN</span></Link>
+        </div>
+        
+        <div className="p-4 border-b border-border/60">
+           <Link href="/" className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#0192f3] hover:bg-[#0070bb] text-white rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-md shadow-blue-100 group">
+              <Globe className="w-4 h-4 group-hover:rotate-12 transition-transform" /> 
+              Quay về Website
+              <ArrowUpRight className="w-3 h-3 opacity-50" />
+           </Link>
         </div>
         
         <div className="flex-1 overflow-y-auto py-6 px-4">
