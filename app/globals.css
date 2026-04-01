@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -22,45 +26,66 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1e293b;
+  --foreground: #1e293b; /* Deep Indigo-Slate - Cực sắc nét */
   --card: #ffffff;
   --card-foreground: #1e293b;
-  --primary: #D4AF37;
+  --popover: #ffffff;
+  --popover-foreground: #1e293b;
+  --primary: #0192f3; /* Traveloka Azure Blue */
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #1e293b;
-  --muted: #f8fafc;
+  --secondary: #00355D; /* Deep Trust Blue */
+  --secondary-foreground: #ffffff;
+  --muted: #f4f6f9;
   --muted-foreground: #64748b;
-  --accent: #fdfaf3;
-  --accent-foreground: #D4AF37;
+  --accent: #e1f4ff; /* Light Sky Blue */
+  --accent-foreground: #0192f3;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #D4AF37;
-  --radius: 0.8rem;
+  --ring: #0192f3;
+  --radius: 0.6rem;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #0192f3;
+  --primary-foreground: #ffffff;
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #0192f3;
+  --destructive: #ef4444;
+  --border: #334155;
+  --input: #334155;
+  --ring: #0192f3;
 }
 
 @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    @apply bg-background text-foreground transition-colors duration-300;
     margin: 0;
-    font-family: var(--font-sans), sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-outfit), var(--font-sans), sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: var(--foreground);
+    @apply font-bold tracking-tight text-foreground font-outfit;
   }
 }
 
-/* Utilities */
-.text-primary {
-  color: var(--primary);
+/* Traveloka-style Hover Utilities */
+.hover-primary {
+  @apply transition-colors hover:text-primary;
 }
 
-.bg-primary {
-  background-color: var(--primary);
-  color: white;
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #0192f3 0%, #0070bb 100%);
 }

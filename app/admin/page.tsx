@@ -88,25 +88,25 @@ export default function AdminDashboardPage() {
     <div className="p-6 lg:p-10">
       {/* Stats widgets */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-50 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/20">
+        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0192f3] flex items-center justify-center shrink-0 border border-blue-100">
             <ShoppingCart className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium mb-1">Tổng Booking</p>
-            <h3 className="text-2xl font-bold tracking-tight premium-slate-text">{stats.totalBookings.toLocaleString()}</h3>
-            <p className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider mt-1">
+            <h3 className="text-2xl font-bold tracking-tight text-slate-900">{stats.totalBookings.toLocaleString()}</h3>
+            <p className="text-[10px] text-[#0192f3] font-bold uppercase tracking-wider mt-1">
               Dữ liệu thực tế
             </p>
           </div>
         </div>
-        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4">
+        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
           <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200">
             <CreditCard className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium mb-1">Doanh thu</p>
-            <h3 className="text-2xl font-bold tracking-tight premium-slate-text">
+            <h3 className="text-2xl font-bold tracking-tight text-slate-900">
               {(stats.totalRevenue / 1000000000).toFixed(2)}B ₫
             </h3>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
@@ -114,25 +114,25 @@ export default function AdminDashboardPage() {
             </p>
           </div>
         </div>
-        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-50 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/20">
+        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#0192f3] flex items-center justify-center shrink-0 border border-blue-100">
             <Package className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium mb-1">Tour đang mở</p>
-            <h3 className="text-2xl font-bold tracking-tight premium-slate-text">{stats.activeTours}</h3>
-            <p className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider mt-1">
+            <h3 className="text-2xl font-bold tracking-tight text-slate-900">{stats.activeTours}</h3>
+            <p className="text-[10px] text-[#0192f3] font-bold uppercase tracking-wider mt-1">
               Trạng thái Active
             </p>
           </div>
         </div>
-        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4">
+        <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
           <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200">
             <Users className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium mb-1">Tổng người dùng</p>
-            <h3 className="text-2xl font-bold tracking-tight premium-slate-text">{stats.totalUsers}</h3>
+            <h3 className="text-2xl font-bold tracking-tight text-slate-900">{stats.totalUsers}</h3>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
               Tài khoản hệ thống
             </p>
@@ -144,39 +144,39 @@ export default function AdminDashboardPage() {
          {/* Main Chart Placeholder */}
          <div className="lg:col-span-2 bg-card border border-border/50 shadow-sm rounded-2xl p-6 h-[400px] flex flex-col">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold tracking-tight premium-slate-text">Biểu đồ tăng trưởng</h3>
-              <select className="text-xs bg-muted/50 border border-border/50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#D4AF37]">
+              <h3 className="text-lg font-bold tracking-tight text-slate-900">Biểu đồ tăng trưởng</h3>
+              <select className="text-xs bg-muted/50 border border-border/50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#0192f3]">
                 <option>7 ngày qua</option>
                 <option>30 ngày qua</option>
               </select>
             </div>
-            <div className="flex-1 bg-accent/30 rounded-xl border border-dashed border-[#D4AF37]/30 flex flex-col items-center justify-center text-muted-foreground text-sm font-medium p-10 text-center">
-              <TrendingUp className="w-10 h-10 mb-4 text-[#D4AF37] opacity-40" />
-              <p className="premium-slate-text opacity-80">Hệ thống đang tổng hợp dữ liệu biểu đồ...</p>
+            <div className="flex-1 bg-blue-50/50 rounded-xl border border-dashed border-blue-200 flex flex-col items-center justify-center text-muted-foreground text-sm font-medium p-10 text-center">
+              <TrendingUp className="w-10 h-10 mb-4 text-[#0192f3] opacity-40" />
+              <p className="text-slate-600 opacity-80">Hệ thống đang tổng hợp dữ liệu biểu đồ...</p>
               <p className="text-[10px] mt-1 font-normal opacity-70">Tính năng này sẽ khả dụng sau khi có thêm dữ liệu giao dịch.</p>
             </div>
          </div>
 
          {/* Recent Bookings */}
          <div className="bg-card border border-border/50 shadow-sm rounded-2xl p-6">
-            <h3 className="text-lg font-bold tracking-tight mb-6 premium-slate-text">Booking gần đây</h3>
+            <h3 className="text-lg font-bold tracking-tight mb-6 text-slate-900">Booking gần đây</h3>
             <div className="space-y-6">
               {stats.recentBookings.length === 0 ? (
                 <p className="text-center py-10 text-muted-foreground text-sm">Chưa có booking nào.</p>
               ) : (
                 stats.recentBookings.map((booking, idx) => (
                   <div key={booking.id} className="flex gap-4 items-center">
-                    <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/20 text-[#D4AF37] font-bold text-xs uppercase">
+                    <div className="w-10 h-10 rounded-full bg-[#0192f3]/10 flex items-center justify-center shrink-0 border border-blue-100 text-[#0192f3] font-bold text-xs uppercase">
                       {booking.customer_name?.charAt(0) || "K"}
                     </div>
                     <div className="truncate flex-1">
-                      <p className="font-semibold text-sm truncate premium-slate-text">{booking.customer_name || "Khách hàng"}</p>
+                      <p className="font-semibold text-sm truncate text-slate-900">{booking.customer_name || "Khách hàng"}</p>
                       <p className="text-xs text-muted-foreground truncate">{booking.tours?.title || "Tour"}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="font-bold text-sm text-[#D4AF37]">{(booking.total_price / 1000000).toFixed(1)}M</p>
+                      <p className="font-bold text-sm text-[#0192f3]">{(booking.total_price / 1000000).toFixed(1)}M</p>
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded-sm inline-block mt-0.5 uppercase tracking-wide
-                        ${booking.status === 'confirmed' || booking.status === 'paid' ? 'bg-slate-100 text-slate-700 border border-slate-200' : 'bg-orange-50 text-[#D4AF37] border border-[#D4AF37]/20'}
+                        ${booking.status === 'confirmed' || booking.status === 'paid' ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 border border-slate-200'}
                       `}>
                         {booking.status === 'pending' ? 'Chờ duyệt' : booking.status === 'paid' ? 'Đã thu' : 'Xác nhận'}
                       </span>

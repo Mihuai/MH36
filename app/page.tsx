@@ -103,7 +103,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white animate-in fade-in slide-in-from-bottom-5 duration-1000 drop-shadow-lg font-outfit">
             Khám phá thế giới cùng <br />
             <span 
-              className="text-primary mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic"
+              className="text-[#0192f3] mt-2 drop-shadow-[0_4px_15px_rgba(1,146,243,0.4)] block md:inline-block italic"
             >
               {settings.companyName}
             </span>
@@ -115,7 +115,7 @@ export default function Home() {
           {/* 2. Thanh tìm kiếm Tour */}
           <div className="max-w-5xl mx-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-2xl p-4 md:p-6 animate-in zoom-in-95 duration-700 delay-300 border border-white/20">
             <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
+              <div className="flex flex-col space-y-1.5 focus-within:text-[#0192f3] relative text-left">
                 <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Điểm đến</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -123,12 +123,12 @@ export default function Home() {
                     value={search.destination} 
                     onChange={e => setSearch({...search, destination: e.target.value})}
                     placeholder="Bạn muốn đi đâu?" 
-                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-slate-900" 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-[#0192f3] shadow-sm h-10 text-slate-900" 
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
+              <div className="flex flex-col space-y-1.5 focus-within:text-[#0192f3] relative text-left">
                 <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Ngày khởi hành</label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -136,19 +136,19 @@ export default function Home() {
                     type="date" 
                     value={search.date}
                     onChange={e => setSearch({...search, date: e.target.value})}
-                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-sm block text-slate-900" 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-[#0192f3] shadow-sm h-10 text-sm block text-slate-900" 
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
+              <div className="flex flex-col space-y-1.5 focus-within:text-[#0192f3] relative text-left">
                 <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Mức giá</label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <select 
                     value={search.price}
                     onChange={e => setSearch({...search, price: e.target.value})}
-                    className="flex h-10 w-full rounded-md border border-slate-200 shadow-sm bg-slate-50 px-3 py-2 pl-9 text-sm hover:bg-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary text-slate-900"
+                    className="flex h-10 w-full rounded-md border border-slate-200 shadow-sm bg-slate-50 px-3 py-2 pl-9 text-sm hover:bg-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0192f3] text-slate-900"
                   >
                     <option value="">Tất cả mức giá</option>
                     <option value="under-2m">Dưới 2 triệu</option>
@@ -158,7 +158,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
+              <div className="flex flex-col space-y-1.5 focus-within:text-[#0192f3] relative text-left">
                 <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Số người</label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -167,13 +167,13 @@ export default function Home() {
                     value={search.pax}
                     onChange={e => setSearch({...search, pax: e.target.value})}
                     placeholder="2 người" 
-                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-slate-900" min={1} 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-[#0192f3] shadow-sm h-10 text-slate-900" min={1} 
                   />
                 </div>
               </div>
 
               <div className="flex items-end lg:col-span-1">
-                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md bg-primary hover:bg-primary/90 text-white border-none">
+                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md bg-[#0192f3] hover:bg-[#0070bb] text-white border-none transition-all">
                   <Search className="h-4 w-4" />
                   Tìm Tour
                 </Button>
