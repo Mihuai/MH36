@@ -50,11 +50,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Cột 1: Thông tin */}
           <div className="col-span-1 md:col-span-1">
-            <Link href="/" className="inline-block mb-4">
+            <Link href="/" className="inline-block mb-4 group">
               {settings.images?.logoUrl ? (
                 <img src={settings.images.logoUrl} alt={settings.companyName} className="h-10 w-auto object-contain" />
               ) : (
-                <span className="text-2xl font-bold tracking-tighter text-primary">MH36 TRAVEL</span>
+                <span className="text-2xl font-black tracking-tighter text-primary drop-shadow-sm group-hover:text-primary/80 transition-all italic underline-offset-8">
+                  MH36 TRAVEL
+                </span>
               )}
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">

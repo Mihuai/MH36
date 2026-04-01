@@ -99,12 +99,15 @@ export default function Home() {
           />
         </div>
         
-        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-5 duration-1000">
-            Khám phá thế giới cùng <span className="text-yellow-400 lg:block mt-2 drop-shadow-lg">{settings.companyName}</span>
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white animate-in fade-in slide-in-from-bottom-5 duration-1000">
+            Khám phá thế giới cùng <br />
+            <span className="text-primary mt-2 drop-shadow-[0_2px_10px_rgba(212,175,55,0.4)] block md:inline-block italic">
+              {settings.companyName}
+            </span>
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 opacity-95 font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md">
-            Hàng ngàn tour du lịch hấp dẫn trong nước và quốc tế đang chờ đón bạn. Trải nghiệm dịch vụ đẳng cấp với chi phí tối ưu nhất.
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/90 font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md">
+            Hàng ngàn tour du lịch hấp dẫn trong nước và quốc tế đang chờ đón bạn. <br className="hidden md:block" /> Trải nghiệm dịch vụ đẳng cấp với chi phí tối ưu nhất.
           </p>
 
           {/* 2. Thanh tìm kiếm Tour */}
