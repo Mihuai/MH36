@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   description: 'Khám phá thế giới cùng MH36 TRAVEL với những trải nghiệm du lịch tuyệt vời nhất.',
 };
 
+import LayoutWrapper from '@/components/layout/LayoutWrapper';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,12 +36,9 @@ export default function RootLayout({
         <SettingsProvider>
           <PaymentProvider>
             <AuthProvider>
-              <Header />
-              <main className="flex-grow">
+              <LayoutWrapper>
                 {children}
-              </main>
-              <Footer />
-              <ChatbotWidget />
+              </LayoutWrapper>
             </AuthProvider>
           </PaymentProvider>
         </SettingsProvider>

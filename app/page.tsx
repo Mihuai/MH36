@@ -216,11 +216,11 @@ export default function Home() {
             {DESTINATIONS.map((dest) => (
               <Link href={`/tour?destination=${dest.name}`} key={dest.name} className="group relative rounded-2xl overflow-hidden aspect-[3/4] flex items-end shadow-md">
                 <img src={dest.image} alt={dest.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="relative z-10 p-6 text-white text-left w-full">
-                  <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{dest.name}</h3>
-                  <div className="w-10 h-1 bg-primary mb-3 rounded-full transform origin-left transition-all duration-300 group-hover:w-16"></div>
-                  <p className="text-sm text-white/90 font-medium">{dest.tours} Tours trải nghiệm</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-90 transition-opacity group-hover:opacity-100" />
+                <div className="relative z-10 p-6 text-left w-full translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  <h3 className="text-2xl font-bold mb-1 text-white group-hover:text-[#0192f3] transition-colors drop-shadow-md">{dest.name}</h3>
+                  <div className="w-10 h-1 bg-[#0192f3] mb-4 rounded-full transform origin-left transition-all duration-300 group-hover:w-16 shadow-[0_0_10px_rgba(1,146,243,0.5)]"></div>
+                  <p className="text-xs text-white uppercase tracking-widest font-black drop-shadow-sm">{dest.tours} Tours trải nghiệm</p>
                 </div>
               </Link>
             ))}

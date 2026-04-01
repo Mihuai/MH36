@@ -33,16 +33,16 @@ export default function Header() {
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">Điểm đến</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                  <NavigationMenuContent className="bg-white border-none shadow-none">
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-white rounded-xl shadow-2xl border border-slate-100 z-[999] relative">
                       {['Đà Nẵng', 'Phú Quốc', 'Nha Trang', 'Hà Nội', 'Hồ Chí Minh', 'Sapa'].map((item) => (
                         <li key={item}>
                           <Link 
                             href={`/tour?destination=${item}`} 
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            className="block select-none space-y-2 rounded-lg p-4 leading-none no-underline outline-none transition-all hover:bg-blue-50/80 group/item"
                           >
-                            <div className="text-sm font-medium leading-none">{item}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            <div className="text-sm font-bold leading-none text-[#00355D] group-hover/item:text-[#0192f3] transition-colors">{item}</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-slate-500 font-medium opacity-80">
                               Khám phá các tour du lịch hấp dẫn tại {item}
                             </p>
                           </Link>

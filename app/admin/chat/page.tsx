@@ -102,20 +102,28 @@ export default function AdminChatPage() {
     async function fetchMessages() {
       if (!activeSessionId || !supabase) return;
       
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .or(`session_id.eq.${activeSessionId},user_id.eq.${activeSessionId}`)
-        .order('created_at', { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from('messages')
+          .select('*')
+          .or(`session_id.eq.${activeSessionId},user_id.eq.${activeSessionId}`)
+          .order('created_at', { ascending: true });
 
-      if (error) {
-        console.error("Error fetching messages:", error);
-      } else {
-        setMessages(data);
+        if (error) {
+          if (Object.keys(error).length > 0) {
+            console.error("Error fetching messages:", error);
+          }
+        } else {
+          setMessages(data || []);
+        }
+      } catch (err) {
+        // Silently handle context loss during hot reload
       }
     }
 
     fetchMessages();
+    
+    // ... subscription logic continues
 
     // Subscribe to messages for this active session
     const channel = supabase?.channel(`session-${activeSessionId}`)
