@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
- 
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'MH36 TRAVEL - Nền tảng Đặt tour du lịch',

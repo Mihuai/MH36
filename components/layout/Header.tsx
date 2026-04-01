@@ -22,7 +22,7 @@ export default function Header() {
             {settings.images?.logoUrl ? (
               <img src={settings.images.logoUrl} alt={settings.companyName} className="h-8 w-auto object-contain" />
             ) : (
-              <span className="text-2xl font-black tracking-tighter text-[#D4AF37] drop-shadow-sm group-hover:drop-shadow-md transition-all italic">
+              <span className="text-2xl font-black tracking-tighter drop-shadow-sm group-hover:drop-shadow-md transition-all italic premium-gold-text">
                 MH36 TRAVEL
               </span>
             )}

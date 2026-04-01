@@ -100,16 +100,15 @@ export default function Home() {
         </div>
         
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white animate-in fade-in slide-in-from-bottom-5 duration-1000">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 premium-white-text animate-in fade-in slide-in-from-bottom-5 duration-1000">
             Khám phá thế giới cùng <br />
             <span 
-              style={{ color: '#D4AF37' }}
-              className="mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic"
+              className="mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic premium-gold-text"
             >
               {settings.companyName}
             </span>
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white/90 font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md">
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 premium-white-text font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md opacity-90">
             Hàng ngàn tour du lịch hấp dẫn trong nước và quốc tế đang chờ đón bạn. <br className="hidden md:block" /> Trải nghiệm dịch vụ đẳng cấp với chi phí tối ưu nhất.
           </p>
 
@@ -174,7 +173,7 @@ export default function Home() {
               </div>
 
               <div className="flex items-end lg:col-span-1">
-                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md">
+                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md premium-gold-bg border-none">
                   <Search className="h-4 w-4" />
                   Tìm Tour
                 </Button>

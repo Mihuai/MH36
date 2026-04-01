@@ -116,3 +116,16 @@
     @apply font-sans;
   }
 }
+
+.premium-gold-text {
+  color: #D4AF37 !important;
+}
+
+.premium-white-text {
+  color: #ffffff !important;
+}
+
+.premium-gold-bg {
+  background-color: #D4AF37 !important;
+  color: #ffffff !important;
+}
