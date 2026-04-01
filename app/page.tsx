@@ -100,55 +100,55 @@ export default function Home() {
         </div>
         
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 premium-white-text animate-in fade-in slide-in-from-bottom-5 duration-1000">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white animate-in fade-in slide-in-from-bottom-5 duration-1000 drop-shadow-lg font-outfit">
             Khám phá thế giới cùng <br />
             <span 
-              className="mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic premium-gold-text"
+              className="text-primary mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic"
             >
               {settings.companyName}
             </span>
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 premium-white-text font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md opacity-90">
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 text-white font-medium animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-200 drop-shadow-md opacity-95">
             Hàng ngàn tour du lịch hấp dẫn trong nước và quốc tế đang chờ đón bạn. <br className="hidden md:block" /> Trải nghiệm dịch vụ đẳng cấp với chi phí tối ưu nhất.
           </p>
 
           {/* 2. Thanh tìm kiếm Tour */}
-          <div className="max-w-5xl mx-auto bg-background text-foreground rounded-2xl shadow-xl p-4 md:p-6 animate-in zoom-in-95 duration-700 delay-300 border border-border/50">
+          <div className="max-w-5xl mx-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-2xl p-4 md:p-6 animate-in zoom-in-95 duration-700 delay-300 border border-white/20">
             <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
-                <label className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Điểm đến</label>
+                <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Điểm đến</label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     value={search.destination} 
                     onChange={e => setSearch({...search, destination: e.target.value})}
                     placeholder="Bạn muốn đi đâu?" 
-                    className="pl-9 bg-accent/50 border-input hover:bg-accent focus-visible:ring-primary shadow-sm h-10" 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-slate-900" 
                   />
                 </div>
               </div>
 
               <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
-                <label className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Ngày khởi hành</label>
+                <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Ngày khởi hành</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     type="date" 
                     value={search.date}
                     onChange={e => setSearch({...search, date: e.target.value})}
-                    className="pl-9 bg-accent/50 border-input hover:bg-accent focus-visible:ring-primary shadow-sm h-10 text-sm block" 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-sm block text-slate-900" 
                   />
                 </div>
               </div>
 
               <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
-                <label className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Mức giá</label>
+                <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Mức giá</label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <select 
                     value={search.price}
                     onChange={e => setSearch({...search, price: e.target.value})}
-                    className="flex h-10 w-full rounded-md border border-input shadow-sm bg-accent/50 px-3 py-2 pl-9 text-sm hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                    className="flex h-10 w-full rounded-md border border-slate-200 shadow-sm bg-slate-50 px-3 py-2 pl-9 text-sm hover:bg-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary text-slate-900"
                   >
                     <option value="">Tất cả mức giá</option>
                     <option value="under-2m">Dưới 2 triệu</option>
@@ -159,21 +159,21 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col space-y-1.5 focus-within:text-primary relative text-left">
-                <label className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Số người</label>
+                <label className="text-xs font-bold uppercase text-slate-500 tracking-wider">Số người</label>
                 <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     type="number" 
                     value={search.pax}
                     onChange={e => setSearch({...search, pax: e.target.value})}
                     placeholder="2 người" 
-                    className="pl-9 bg-accent/50 border-input hover:bg-accent focus-visible:ring-primary shadow-sm h-10" min={1} 
+                    className="pl-9 bg-slate-50 border-slate-200 hover:bg-white focus-visible:ring-primary shadow-sm h-10 text-slate-900" min={1} 
                   />
                 </div>
               </div>
 
               <div className="flex items-end lg:col-span-1">
-                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md premium-gold-bg border-none">
+                <Button type="submit" size="lg" className="w-full h-10 font-bold gap-2 text-md shadow-md bg-primary hover:bg-primary/90 text-white border-none">
                   <Search className="h-4 w-4" />
                   Tìm Tour
                 </Button>

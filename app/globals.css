@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-outfit);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,16 +49,16 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1e293b; /* Deep Slate - Premium Dark */
+  --foreground: #1e293b; /* Deep Slate - Sang trọng bậc nhất */
   --card: #ffffff;
   --card-foreground: #1e293b;
   --popover: #ffffff;
   --popover-foreground: #1e293b;
-  --primary: #D4AF37; /* Royal Gold */
+  --primary: #D4AF37; /* Premium Gold */
   --primary-foreground: #ffffff;
-  --secondary: #f8fafc;
+  --secondary: #f1f5f9;
   --secondary-foreground: #1e293b;
-  --muted: #f1f5f9;
+  --muted: #f8fafc;
   --muted-foreground: #64748b;
   --accent: #fdfaf3; /* Light Creamy Gold */
   --accent-foreground: #D4AF37;
@@ -100,35 +100,24 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-[#1e293b] dark:text-white;
+    @apply font-bold tracking-tight text-foreground/90 font-outfit;
   }
-  
-  /* Nhuộm Gold cho các tiêu đề quan trọng */
-  h1 { @apply text-[#D4AF37]; }
   
   html {
     @apply font-sans;
   }
 }
 
-/* Custom Bulletproof Utility Classes */
-.premium-gold-text {
-  color: #D4AF37 !important;
+/* Các lớp tiện ích (Utilities) thuần túy - Dễ dùng, Không ép màu */
+.text-premium-gold {
+  color: #D4AF37;
 }
 
-.premium-white-text {
-  color: #ffffff !important;
+.bg-premium-gold {
+  background-color: #D4AF37;
+  color: white;
 }
 
-.premium-slate-text {
-  color: #1e293b !important;
-}
-
-.premium-gold-bg {
-  background-color: #D4AF37 !important;
-  color: #ffffff !important;
-}
-
-.premium-gold-border {
-  border-color: #D4AF37 !important;
+.border-premium-gold {
+  border-color: #D4AF37;
 }

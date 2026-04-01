@@ -54,7 +54,7 @@ export default function Footer() {
               {settings.images?.logoUrl ? (
                 <img src={settings.images.logoUrl} alt={settings.companyName} className="h-10 w-auto object-contain" />
               ) : (
-                <span className="text-2xl font-black tracking-tighter drop-shadow-sm group-hover:opacity-80 transition-all italic underline-offset-8 premium-gold-text">
+                <span className="text-2xl font-black tracking-tighter drop-shadow-sm group-hover:opacity-80 transition-all italic underline-offset-8 text-primary">
                   MH36 TRAVEL
                 </span>
               )}
