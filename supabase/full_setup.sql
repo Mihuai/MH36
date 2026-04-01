@@ -1,6 +1,6 @@
 -- ========================================================
 -- MH36 TRAVEL - FULL DATABASE SETUP (SUPABASE)
--- Version: 1.2 (Includes Newsletter & Realtime Fixes)
+-- Version: 1.5 (FINAL CONSOLIDATED SCHEMA)
 -- ========================================================
 
 -- 1. THIẾT LẬP BẢNG NGƯỜI DÙNG (USERS)
@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS public.users (
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow users to read their own data" ON public.users;
 CREATE POLICY "Allow users to read their own data" ON public.users FOR SELECT USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Allow users to update their own data" ON public.users;
+CREATE POLICY "Allow users to update their own data" ON public.users FOR UPDATE USING (auth.uid() = id);
 
 -- 2. BẢNG ĐIỂM ĐẾN (DESTINATIONS)
 CREATE TABLE IF NOT EXISTS public.destinations (
@@ -84,8 +86,8 @@ CREATE TABLE IF NOT EXISTS public.bookings (
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow Individual Insert Bookings" ON public.bookings;
 CREATE POLICY "Allow Individual Insert Bookings" ON public.bookings FOR INSERT WITH CHECK (true);
-DROP POLICY IF EXISTS "Allow users to read their own bookings" ON public.bookings;
-CREATE POLICY "Allow users to read their own bookings" ON public.bookings FOR SELECT USING (true); -- Có thể siết chặt hơn: auth.uid() = user_id
+DROP POLICY IF EXISTS "Allow Public Read Bookings" ON public.bookings;
+CREATE POLICY "Allow Public Read Bookings" ON public.bookings FOR SELECT USING (true);
 
 -- 5. BẢNG TIN NHẮN (MESSAGES - CHAT SYSTEM)
 CREATE TABLE IF NOT EXISTS public.messages (
@@ -109,7 +111,38 @@ CREATE INDEX IF NOT EXISTS idx_messages_user_id ON public.messages(user_id);
 CREATE INDEX IF NOT EXISTS idx_messages_session_id ON public.messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON public.messages(created_at);
 
--- 6. BẢNG ĐĂNG KÝ NHẬN TIN (NEWSLETTER)
+-- 6. BẢNG ĐÁNH GIÁ (REVIEWS)
+CREATE TABLE IF NOT EXISTS public.reviews (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  tour_id UUID REFERENCES public.tours(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Public Read Reviews" ON public.reviews;
+CREATE POLICY "Allow Public Read Reviews" ON public.reviews FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Allow LoggedIn Insert Reviews" ON public.reviews;
+CREATE POLICY "Allow LoggedIn Insert Reviews" ON public.reviews FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
+-- 7. BẢNG THÔNG BÁO (NOTIFICATIONS)
+CREATE TABLE IF NOT EXISTS public.notifications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  type TEXT, -- 'reminder', 'booking', 'system'
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow users to read their own notifications" ON public.notifications;
+CREATE POLICY "Allow users to read their own notifications" ON public.notifications FOR SELECT USING (auth.uid() = user_id);
+
+-- 8. BẢNG ĐĂNG KÝ NHẬN TIN (NEWSLETTER)
 CREATE TABLE IF NOT EXISTS public.newsletter_subscriptions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
@@ -123,8 +156,7 @@ CREATE POLICY "Allow Public Subscribe" ON public.newsletter_subscriptions FOR IN
 DROP POLICY IF EXISTS "Allow Admin Read Subscriptions" ON public.newsletter_subscriptions;
 CREATE POLICY "Allow Admin Read Subscriptions" ON public.newsletter_subscriptions FOR SELECT USING (true);
 
--- 7. THIẾT LẬP STORAGE (BUCKET & POLICIES)
--- Lưu ý: Nếu lỗi ở bước này, hãy vào Dashboard -> Storage -> Tạo bucket 'tours' (Public) thủ công
+-- 9. THIẾT LẬP STORAGE (BUCKET & POLICIES)
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('tours', 'tours', true)
 ON CONFLICT (id) DO NOTHING;
@@ -135,7 +167,7 @@ CREATE POLICY "Allow Public Upload" ON storage.objects FOR INSERT TO public WITH
 DROP POLICY IF EXISTS "Allow Public Read" ON storage.objects;
 CREATE POLICY "Allow Public Read" ON storage.objects FOR SELECT TO public USING (bucket_id = 'tours');
 
--- 8. KÍCH HOẠT REALTIME CHO CHAT
+-- 10. KÍCH HOẠT REALTIME CHO CHAT
 DO $$
 BEGIN
     IF NOT EXISTS (

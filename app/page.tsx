@@ -102,7 +102,7 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 text-white animate-in fade-in slide-in-from-bottom-5 duration-1000">
             Khám phá thế giới cùng <br />
-            <span className="text-primary mt-2 drop-shadow-[0_2px_10px_rgba(212,175,55,0.4)] block md:inline-block italic">
+            <span className="text-[#D4AF37] mt-2 drop-shadow-[0_4px_15px_rgba(212,175,55,0.5)] block md:inline-block italic">
               {settings.companyName}
             </span>
           </h1>
