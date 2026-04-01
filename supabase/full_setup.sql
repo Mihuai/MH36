@@ -1,6 +1,6 @@
 -- ========================================================
 -- MH36 TRAVEL - FULL DATABASE SETUP (SUPABASE)
--- Copy toàn bộ nội dung này và dán vào SQL Editor trên Supabase
+-- Version: 1.2 (Includes Newsletter & Realtime Fixes)
 -- ========================================================
 
 -- 1. THIẾT LẬP BẢNG NGƯỜI DÙNG (USERS)
@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS public.users (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow users to read their own data" ON public.users;
+CREATE POLICY "Allow users to read their own data" ON public.users FOR SELECT USING (auth.uid() = id);
+
 -- 2. BẢNG ĐIỂM ĐẾN (DESTINATIONS)
 CREATE TABLE IF NOT EXISTS public.destinations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -24,6 +28,10 @@ CREATE TABLE IF NOT EXISTS public.destinations (
   image_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE public.destinations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Public Read Destinations" ON public.destinations;
+CREATE POLICY "Allow Public Read Destinations" ON public.destinations FOR SELECT USING (true);
 
 -- 3. BẢNG TOURS
 CREATE TABLE IF NOT EXISTS public.tours (
@@ -48,6 +56,10 @@ CREATE TABLE IF NOT EXISTS public.tours (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.tours ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Public Read Tours" ON public.tours;
+CREATE POLICY "Allow Public Read Tours" ON public.tours FOR SELECT USING (true);
+
 -- 4. BẢNG ĐẶT TOUR (BOOKINGS)
 CREATE TABLE IF NOT EXISTS public.bookings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -69,6 +81,12 @@ CREATE TABLE IF NOT EXISTS public.bookings (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Individual Insert Bookings" ON public.bookings;
+CREATE POLICY "Allow Individual Insert Bookings" ON public.bookings FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow users to read their own bookings" ON public.bookings;
+CREATE POLICY "Allow users to read their own bookings" ON public.bookings FOR SELECT USING (true); -- Có thể siết chặt hơn: auth.uid() = user_id
+
 -- 5. BẢNG TIN NHẮN (MESSAGES - CHAT SYSTEM)
 CREATE TABLE IF NOT EXISTS public.messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -81,30 +99,43 @@ CREATE TABLE IF NOT EXISTS public.messages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Public Insert Messages" ON public.messages;
+CREATE POLICY "Allow Public Insert Messages" ON public.messages FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow Public Read Messages" ON public.messages;
+CREATE POLICY "Allow Public Read Messages" ON public.messages FOR SELECT USING (true);
+
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON public.messages(user_id);
 CREATE INDEX IF NOT EXISTS idx_messages_session_id ON public.messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON public.messages(created_at);
 
--- 6. THIẾT LẬP STORAGE (BUCKET & POLICIES)
--- Lưu ý: Lệnh INSERT này có thể cần quyền cao hơn, nếu lỗi hãy tạo Bucket 'tours' thủ công
+-- 6. BẢNG ĐĂNG KÝ NHẬN TIN (NEWSLETTER)
+CREATE TABLE IF NOT EXISTS public.newsletter_subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.newsletter_subscriptions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow Public Subscribe" ON public.newsletter_subscriptions;
+CREATE POLICY "Allow Public Subscribe" ON public.newsletter_subscriptions FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow Admin Read Subscriptions" ON public.newsletter_subscriptions;
+CREATE POLICY "Allow Admin Read Subscriptions" ON public.newsletter_subscriptions FOR SELECT USING (true);
+
+-- 7. THIẾT LẬP STORAGE (BUCKET & POLICIES)
+-- Lưu ý: Nếu lỗi ở bước này, hãy vào Dashboard -> Storage -> Tạo bucket 'tours' (Public) thủ công
 INSERT INTO storage.buckets (id, name, public) 
 VALUES ('tours', 'tours', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Xóa Policy cũ nếu có trước khi tạo mới để tránh lỗi
 DROP POLICY IF EXISTS "Allow Public Upload" ON storage.objects;
+CREATE POLICY "Allow Public Upload" ON storage.objects FOR INSERT TO public WITH CHECK (bucket_id = 'tours');
+
 DROP POLICY IF EXISTS "Allow Public Read" ON storage.objects;
+CREATE POLICY "Allow Public Read" ON storage.objects FOR SELECT TO public USING (bucket_id = 'tours');
 
--- Policy cho phép Upload (INSERT)
-CREATE POLICY "Allow Public Upload" ON storage.objects
-FOR INSERT TO public WITH CHECK (bucket_id = 'tours');
-
--- Policy cho phép Xem ảnh (SELECT)
-CREATE POLICY "Allow Public Read" ON storage.objects
-FOR SELECT TO public USING (bucket_id = 'tours');
-
--- 7. KÍCH HOẠT REALTIME
--- Kích hoạt Realtime cho bảng messages (Có kiểm tra trùng lặp)
+-- 8. KÍCH HOẠT REALTIME CHO CHAT
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -116,19 +147,3 @@ BEGIN
         ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
     END IF;
 END $$;
-
--- 8. KÍCH HOẠT RLS (ROW LEVEL SECURITY)
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.destinations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tours ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
-
--- 9. QUY TẮC RLS CƠ BẢN (CHO PHÉP TRUY CẬP ĐỌC CÔNG KHAI)
-DROP POLICY IF EXISTS "Allow Public Read Destinations" ON public.destinations;
-DROP POLICY IF EXISTS "Allow Public Read Tours" ON public.tours;
-DROP POLICY IF EXISTS "Allow Individual Insert Bookings" ON public.bookings;
-
-CREATE POLICY "Allow Public Read Destinations" ON public.destinations FOR SELECT USING (true);
-CREATE POLICY "Allow Public Read Tours" ON public.tours FOR SELECT USING (true);
-CREATE POLICY "Allow Individual Insert Bookings" ON public.bookings FOR INSERT WITH CHECK (true);

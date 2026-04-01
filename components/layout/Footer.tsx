@@ -10,15 +10,37 @@ export default function Footer() {
   const { settings } = useSettings();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      setTimeout(() => {
-        setIsSubscribed(false);
+    if (!email) return;
+    
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const result = await res.json();
+      
+      if (result.success) {
+        setIsSubscribed(true);
         setEmail('');
-      }, 5000);
+        setTimeout(() => setIsSubscribed(false), 8000);
+      } else {
+        setError(result.error || 'Đã có lỗi xảy ra. Hãy thử lại.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Lỗi kết nối. Hãy thử lại sau.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,20 +122,26 @@ export default function Footer() {
             {isSubscribed ? (
                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-500/10 p-3 rounded-lg animate-in fade-in">
                  <CheckCircle2 className="w-5 h-5" />
-                 <span>Đăng ký thành công! Cảm ơn bạn.</span>
+                 <span>Đăng ký thành công! Kiểm tra email của bạn nhé.</span>
                </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Nhập Email của bạn..." 
-                  className="flex h-10 w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary" 
-                  required
-                />
-                <Button type="submit" className="h-10">Đăng ký</Button>
-              </form>
+              <div className="space-y-2">
+                <form onSubmit={handleSubscribe} className="flex gap-2">
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Nhập Email của bạn..." 
+                    className="flex h-10 w-full rounded-md border border-input bg-muted/30 px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary" 
+                    required
+                    disabled={isLoading}
+                  />
+                  <Button type="submit" className="h-10" disabled={isLoading}>
+                    {isLoading ? '...' : 'Đăng ký'}
+                  </Button>
+                </form>
+                {error && <p className="text-[10px] text-destructive font-medium">{error}</p>}
+              </div>
             )}
           </div>
         </div>
